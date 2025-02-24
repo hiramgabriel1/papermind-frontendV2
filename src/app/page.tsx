@@ -1,3 +1,5 @@
+import NewChat from "@/components/NewChat";
+
 export default function Home() {
   return (
     <>
@@ -13,9 +15,7 @@ export default function Home() {
         <div className="text-neutral-500 text-lg">
           No recent conversations yet.
         </div>
-        <button className="bg-neutral-950 text-white font-semibold rounded-2xl px-6 py-2">
-          New Chat
-        </button>
+        <NewChat />
       </section>
     </>
   );
