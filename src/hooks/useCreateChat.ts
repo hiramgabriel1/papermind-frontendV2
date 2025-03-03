@@ -6,6 +6,10 @@ import axios from "axios";
 import { servers } from "@/utils/servers";
 import jwt from "jsonwebtoken";
 
+/**
+ * this hook is used to create a new chat
+ * @returns
+ */
 export function useCreateChat() {
 	const createChat = useCallback(async (formData: FormData) => {
 		try {
@@ -20,13 +24,12 @@ export function useCreateChat() {
 				throw new Error("No se encontró el userId en el token");
 			}
 
-			// Hacemos el POST con multipart/form-data
 			const response = await axios.post(
 				`${servers.local_api}/api/v1/users/create-chat/${userId}`,
 				formData,
 				{
 					headers: {
-						auth: `Bearer ${token}`,
+						auth: token,
 						"Content-Type": "multipart/form-data",
 					},
 				}
