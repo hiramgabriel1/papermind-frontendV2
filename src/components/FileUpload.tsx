@@ -1,13 +1,15 @@
 import { useState } from "react";
 
-export default function FileUpload() {
-	const [file, setFile] = useState(null);
-	const [timeAgo, setTimeAgo] = useState("");
+interface FileUploadProps {
+	file: File | null;
+	setFile: (file: File | null) => void;
+}
 
-	const handleFileChange = (e) => {
-		console.log(e.target.files[0]);
+export default function FileUpload({ file, setFile }: FileUploadProps) {
+	const [timeAgo, setTimeAgo] = useState<string>("");
 
-		const selectedFile = e.target.files[0];
+	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const selectedFile = e.target.files?.[0];
 		if (selectedFile) {
 			setFile(selectedFile);
 			setTimeAgo("Just now");
@@ -23,6 +25,7 @@ export default function FileUpload() {
 					<input
 						type="file"
 						accept="application/pdf"
+						name="doc"
 						onChange={handleFileChange}
 						className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
 						title="Upload file"
@@ -33,9 +36,9 @@ export default function FileUpload() {
 				</div>
 			) : (
 				<div className="bg-white rounded-lg shadow p-4">
-					<div className="flex items-start gap-3 ">
+					<div className="flex items-start gap-3">
 						<div className="bg-gray-100 p-2 flex items-center rounded-lg size-12">
-							<img src={imagePreview} className="w-full object-cover" />
+							<img src={imagePreview} alt="" className="w-full object-cover" />
 						</div>
 						<div>
 							<h3 className="font-medium text-gray-900">{file.name}</h3>

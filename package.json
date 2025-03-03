@@ -10,9 +10,13 @@
   },
   "dependencies": {
     "@tanstack/react-form": "^1.0.0",
+    "@types/js-cookie": "^3.0.6",
+    "@types/jsonwebtoken": "^9.0.9",
     "axios": "^1.8.1",
     "clsx": "^2.1.1",
     "jose": "^6.0.8",
+    "js-cookie": "^3.0.5",
+    "jsonwebtoken": "^9.0.2",
     "next": "15.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

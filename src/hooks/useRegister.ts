@@ -16,7 +16,7 @@ export const useRegister = async (data: User) => {
 			data
 		);
 
-		if (response.status !== 200) {
+		if (response.status !== 201) {
 			throw new Error("Error al registrar usuario");
 		}
 

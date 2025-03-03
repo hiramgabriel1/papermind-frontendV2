@@ -1,6 +1,7 @@
 "use client";
 
 import { useLogin } from "@/hooks/useLogin";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
@@ -20,7 +21,18 @@ function Login() {
 		formState: { errors },
 	} = useForm<Inputs>();
 
-	const onSubmit: SubmitHandler<Inputs> = async (data) => await useLogin(data);
+	const router = useRouter();
+
+	const onSubmit: SubmitHandler<Inputs> = async (formData) => {
+		const result = await useLogin(formData);
+
+		if (result && result.token) {
+			document.cookie = `token=${result.token}; path=/;`;
+
+			router.push("/");
+		}
+		console.log("Error en el login o no se recibió token");
+	};
 
 	console.log(errors);
 
