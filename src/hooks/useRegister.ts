@@ -9,14 +9,12 @@ import axios from "axios";
  */
 export const useRegister = async (data: User) => {
 	try {
-		console.log(data);
-
 		const response = await axios.post<UserResponse>(
 			`${servers.local_api}/api/v1/users/create-user/`,
 			data
 		);
 
-		if (response.status !== 200) {
+		if (response.status !== 201) {
 			throw new Error("Error al registrar usuario");
 		}
 

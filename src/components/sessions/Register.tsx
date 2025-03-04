@@ -1,8 +1,10 @@
 "use client";
 
 import { useRegister } from "@/hooks/useRegister";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import Cookies from "js-cookie";
 
 type Inputs = {
 	username: string;
@@ -23,10 +25,22 @@ function Register() {
 		formState: { errors },
 	} = useForm<Inputs>();
 
-	const onSubmit: SubmitHandler<Inputs> = async (data) =>
-		await useRegister(data);
+	const router = useRouter();
 
-	console.log(errors);
+	const onSubmit: SubmitHandler<Inputs> = async (data) => {
+		const response = await useRegister(data);
+
+		if (response?.token) {
+			Cookies.set("token", response.token, {
+				path: "/",
+				expires: 2,
+			});
+			router.push("/");
+		} else {
+			// todo: pendiente cambiar por un toast
+			console.log("Error en el registro o no se recibió token");
+		}
+	};
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)}>
