@@ -2,6 +2,9 @@
 
 import { useGetDocuments } from "@/hooks/useGetDocuments";
 import { useEffect } from "react";
+import Table from "../../components/files/Table";
+import Document from "../../components/files/Document";
+
 /**
  * This page is used to display the documents
  * @returns
@@ -13,5 +16,10 @@ export default function Documents() {
 		getDocuments();
 	}, []);
 
-	return <h2 className="text-3xl font-semibold">Documentos</h2>;
+	return (
+		<div>
+			<Document />
+			<Table />
+		</div>
+	);
 }
