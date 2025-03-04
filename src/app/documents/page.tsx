@@ -1,7 +1,12 @@
+import Table from "../../components/files/Table"
+import Document from "../../components/files/Document"
+
 export default function Documents () {
   return (
-    <h2 className="text-3xl font-semibold">
-      Documents
-    </h2>
+    <div>
+      <Document />
+      <Table />
+    </div>
+    
   )
 }
