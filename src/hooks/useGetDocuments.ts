@@ -15,7 +15,6 @@ export const useGetDocuments = () => {
 	}
 
 	const decodedToken = jwt.decode(cookieToken);
-	console.log("Decoded token:", decodedToken);
 
 	if (!decodedToken || typeof decodedToken !== "object") {
 		throw new Error("El token no es válido");
