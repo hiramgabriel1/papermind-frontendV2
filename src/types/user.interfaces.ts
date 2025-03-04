@@ -4,7 +4,7 @@ export interface User {
 }
 
 export interface UserResponse {
-	id: number;
+	userId: number;
 	profilePic: string | null;
 	username: string;
 	lastName: string;

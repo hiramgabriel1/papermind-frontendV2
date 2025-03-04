@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { servers } from "@/utils/servers";
 import jwt from "jsonwebtoken";
+import { UserResponse } from "@/types/user.interfaces";
 
 /**
  * this hook is used to create a new chat
@@ -19,7 +20,8 @@ export function useCreateChat() {
 			}
 
 			const decoded = jwt.decode(token);
-			const userId = decoded?.userId;
+			const { userId } = decoded as UserResponse;
+
 			if (!userId) {
 				throw new Error("No se encontró el userId en el token");
 			}

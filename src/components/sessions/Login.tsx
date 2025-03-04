@@ -4,6 +4,8 @@ import { useLogin } from "@/hooks/useLogin";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import Cookies from "js-cookie";
+import { useAuthStore } from "@/app/stores/authUser.store";
 
 type Inputs = {
 	email: string;
@@ -20,18 +22,26 @@ function Login() {
 		handleSubmit,
 		formState: { errors },
 	} = useForm<Inputs>();
-
 	const router = useRouter();
+	const { setToken } = useAuthStore();
 
 	const onSubmit: SubmitHandler<Inputs> = async (formData) => {
 		const result = await useLogin(formData);
 
-		if (result && result.token) {
-			document.cookie = `token=${result.token}; path=/;`;
+		console.log("token:", result?.token);
+
+		if (result?.token) {
+			setToken(result.token);
+			Cookies.set("token", result.token, {
+				path: "/",
+				expires: 2,
+			});
 
 			router.push("/");
+		} else {
+			// todo: pendiente cambiar por un toast
+			console.log("Error al iniciar sesión");
 		}
-		console.log("Error en el login o no se recibió token");
 	};
 
 	console.log(errors);
