@@ -15,7 +15,6 @@ export async function middleware(request: NextRequest) {
 		);
 		return NextResponse.next();
 	} catch (error) {
-		console.log(error);
 		return NextResponse.redirect(new URL("/registerss", request.url));
 	}
 }
