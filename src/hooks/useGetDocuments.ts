@@ -1,13 +1,10 @@
+import { useCallback } from "react";
 import { servers } from "@/utils/servers";
 import { UserResponse } from "@/types/user.interfaces";
 import axios from "axios";
 import Cookies from "js-cookie";
 import jwt from "jsonwebtoken";
 
-/**
- * This hook is used to get the documents
- * @returns
- */
 export const useGetDocuments = () => {
 	const cookieToken = Cookies.get("token");
 	if (!cookieToken) {
@@ -15,14 +12,13 @@ export const useGetDocuments = () => {
 	}
 
 	const decodedToken = jwt.decode(cookieToken);
-
 	if (!decodedToken || typeof decodedToken !== "object") {
 		throw new Error("El token no es válido");
 	}
 
 	const { userId } = decodedToken as UserResponse;
 
-	const getDocuments = async () => {
+	const getDocuments = useCallback(async () => {
 		const response = await axios.get(
 			`${servers.local_api}/api/v1/users/view-directories/${userId}`,
 			{
@@ -36,7 +32,7 @@ export const useGetDocuments = () => {
 			return response.data;
 		}
 		return { error: response.data };
-	};
+	}, [userId, cookieToken]);
 
 	return { getDocuments };
 };

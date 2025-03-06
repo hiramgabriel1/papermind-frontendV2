@@ -28,8 +28,6 @@ function Login() {
 	const onSubmit: SubmitHandler<Inputs> = async (formData) => {
 		const result = await useLogin(formData);
 
-		console.log("token:", result?.token);
-
 		if (result?.token) {
 			setToken(result.token);
 			Cookies.set("token", result.token, {
@@ -40,11 +38,8 @@ function Login() {
 			router.push("/");
 		} else {
 			// todo: pendiente cambiar por un toast
-			console.log("Error al iniciar sesión");
 		}
 	};
-
-	console.log(errors);
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)}>

@@ -20,6 +20,5 @@ export const useLogin = async (data: User) => {
 
 		return response.data;
 	} catch (error) {
-		console.log(error);
 	}
 };
