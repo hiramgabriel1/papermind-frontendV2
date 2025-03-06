@@ -36,7 +36,7 @@ export default function Document() {
 					<input
 						type="text"
 						name="search"
-						placeholder="Search"
+						placeholder="Buscar archivo..."
 						className="border border-gray-500 px-3 rounded-lg text-gray-500"
 					/>
 					<select
