@@ -76,6 +76,7 @@ export default function Chat({ chatId }: ChatProps) {
 								<textarea
 									className="w-full text-sm p-2 resize-none focus:outline-none"
 									rows={1}
+									required
 									placeholder="Escribe algo..."
 									{...register("queryMessage")}
 								/>
