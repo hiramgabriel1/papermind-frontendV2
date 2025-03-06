@@ -1,7 +1,6 @@
 import React from "react";
-import pdfLogo from "../../../public/pdflogo.png";
-import Image from "next/image";
 import { IDocument } from "@/types/Documents.interfaces";
+import { FileIcon } from "../Icons";
 
 interface TableProps {
 	data: IDocument[];
@@ -33,13 +32,7 @@ export default function Table({ data }: TableProps) {
 							<tr>
 								<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
 									<div className="flex items-center">
-										<div className="flex-shrink-0 w-10 h-10">
-											<Image
-												className="w-full h-full"
-												src={pdfLogo}
-												alt="pdflogo"
-											/>
-										</div>
+										<div className="flex-shrink-0 w-10 h-10">{FileIcon}</div>
 										<div className="ml-3">
 											<p className="text-gray-900 whitespace-no-wrap">
 												archivo.pdf
