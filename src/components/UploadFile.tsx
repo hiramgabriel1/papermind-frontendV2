@@ -4,17 +4,18 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { UploadDocumentProps } from "@/types/Documents.interfaces";
 import { useUploadDocument } from "@/hooks/useUploadDocument";
 
-/**
- * Componente para subir un archivo
- */
 interface UploadFileProps {
 	onClose: () => void;
 }
 
+/**
+ * Componente para subir un archivo
+ * @param onClose - Función para cerrar el componente
+ * @returns Componente de subida de archivo
+ */
 function UploadFile({ onClose }: UploadFileProps) {
 	const { register, handleSubmit } = useForm<UploadDocumentProps>();
 
-	// Llama a la función retornada por el hook.
 	const uploadDocument = useUploadDocument();
 
 	const onSubmit: SubmitHandler<UploadDocumentProps> = async (data) => {
@@ -32,13 +33,16 @@ function UploadFile({ onClose }: UploadFileProps) {
 		formData.append("typeDocument", data.typeDocument);
 
 		await uploadDocument(formData);
+		onClose();
 	};
 
 	return (
 		<div className="flex items-center justify-center p-12">
 			<div className="mx-auto w-full max-w-[550px] bg-white">
 				<form onSubmit={handleSubmit(onSubmit)} className="py-6 px-9">
-					<CloseIcon />
+					<button type="button" onClick={onClose} className="mb-4">
+						<CloseIcon />
+					</button>
 					<div className="mb-6 pt-4">
 						<div className="mb-8">
 							<input
