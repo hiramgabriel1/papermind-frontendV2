@@ -17,7 +17,7 @@ export default function NavLink({
 		<Link
 			href={href}
 			className={clsx(
-				`text-lg font-semibold flex gap-2 items-center rounded-lg transition-all px-2.5 py-2 text-gray-500`,
+				`text-base font-semibold flex gap-2 items-center rounded-lg transition-all px-2.5 py-2 text-gray-500`,
 				{
 					"bg-neutral-200 text-neutral-950": path === href,
 				}
