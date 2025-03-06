@@ -9,7 +9,7 @@ export default function Document() {
 
 	return (
 		<main>
-			<section>
+			<section className={`${isOpen ? "blur z-10" : ""}`}>
 				<div className="flex justify-between">
 					<div>
 						<h3 className="font-semibold text-2xl">Documentos</h3>
@@ -23,7 +23,7 @@ export default function Document() {
 							>
 								Crear carpeta
 							</button>
-							{isOpen && <Createfile onClose={() => setIsOpen(false)} />}
+					
 						</div>
 						<div>
 							<button className="px-3 py-2 border border-gray-500 bg-black text-white rounded-lg">
@@ -52,6 +52,7 @@ export default function Document() {
 					</select>
 				</div>
 			</section>
+            {isOpen && <Createfile onClose={() => setIsOpen(false)} />}
 		</main>
 	);
 }

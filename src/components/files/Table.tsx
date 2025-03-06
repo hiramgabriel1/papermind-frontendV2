@@ -2,6 +2,7 @@ import React from "react";
 import { IDocument } from "@/types/Documents.interfaces";
 import { FileIcon } from "../Icons";
 
+
 interface TableProps {
 	directoryData: IDocument[];
 	// todo: pendiente crear el fileData type
@@ -20,6 +21,7 @@ export default function Table({ directoryData }: TableProps) {
 			</div>
 		);
 	}
+
 
 	return (
 		<div className=" w-full">
@@ -46,7 +48,7 @@ export default function Table({ directoryData }: TableProps) {
 							<tr>
 								<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
 									<div className="flex items-center">
-										<div className="flex-shrink-0 w-10 h-10">
+										<div className="flex-shrink-0 w-10 h-12">
 											<FileIcon />
 										</div>
 										<div className="ml-3">
