@@ -1,18 +1,28 @@
 import React from "react";
 import { IDocument } from "@/types/Documents.interfaces";
-import { DirectoryIcon, FileIcon } from "../Icons";
+import { DeleIcon, DirectoryIcon, EditIcon, FileIcon } from "../Icons";
 import moment from "moment";
+import { useDeleteDocument } from "@/hooks/useDeleteDocument";
+import Cookies from "js-cookie";
+import jwt from "jsonwebtoken";
+import { UserResponse } from "@/types/user.interfaces";
 
 interface TableProps {
 	directoryData: IDocument | null;
 }
 
 /**
- * Componente para mostrar la tabla de archivos
- * @param directoryData - Datos de los archivos
- * @returns Componente de la tabla
+ * this component is used to show the table of documents
+ * @param directoryData - data of the documents
+ * @returns the table of documents
  */
 export default function Table({ directoryData }: TableProps) {
+	const token = Cookies.get("token");
+	const deleteDocument = useDeleteDocument();
+
+	const decodedToken = jwt.decode(String(token));
+	const { userId } = decodedToken as UserResponse;
+
 	if (!directoryData?.directories) {
 		return (
 			<div className="flex justify-center items-center h-full">
@@ -38,6 +48,9 @@ export default function Table({ directoryData }: TableProps) {
 									Fecha de creación
 								</th>
 								<th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+									Editar
+								</th>
+								<th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
 									Borrar
 								</th>
 							</tr>
@@ -55,7 +68,7 @@ export default function Table({ directoryData }: TableProps) {
 												</div>
 												<div className="ml-3">
 													<p className="text-gray-900 whitespace-no-wrap">
-														{doc.titleDirectory || "archivo.pdf"}
+														{doc.titleDirectory || doc.fileUrl}
 													</p>
 												</div>
 											</div>
@@ -71,8 +84,22 @@ export default function Table({ directoryData }: TableProps) {
 											</p>
 										</td>
 										<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-											<button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-												Borrar
+											<button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-2 rounded">
+												<EditIcon />
+											</button>
+										</td>
+										<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+											<button
+												onClick={async () => {
+													try {
+														await deleteDocument(userId, doc.id);
+													} catch (error) {
+														console.error("Error al borrar documento:", error);
+													}
+												}}
+												className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+											>
+												<DeleIcon />
 											</button>
 										</td>
 									</tr>

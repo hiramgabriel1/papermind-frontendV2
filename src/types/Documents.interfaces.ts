@@ -11,3 +11,9 @@ export interface IDocument {
 		createdAt: moment.Moment;
 	}[];
 }
+
+export interface UploadDocumentProps {
+	titleDirectory?: string;
+	document?: string;
+	typeDocument: "file" | "directory";
+}

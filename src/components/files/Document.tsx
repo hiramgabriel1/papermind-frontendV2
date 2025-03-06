@@ -2,10 +2,16 @@
 
 import React from "react";
 import { useState } from "react";
-import Createfile from "./Createfile";
+import CreateFile from "./CreateFile";
+import UploadFile from "../UploadFile";
 
+/**
+ * Componente que muestra la lista de documentos y permite crear nuevos archivos o directorios
+ * @returns
+ */
 export default function Document() {
 	const [isOpen, setIsOpen] = useState(false);
+	const [isOpenUpload, setIsOpenUpload] = useState(false);
 
 	return (
 		<main>
@@ -23,10 +29,12 @@ export default function Document() {
 							>
 								Crear carpeta
 							</button>
-					
 						</div>
 						<div>
-							<button className="px-3 py-2 border border-gray-500 bg-black text-white rounded-lg">
+							<button
+								className="px-3 py-2 border border-gray-500 bg-black text-white rounded-lg"
+								onClick={() => setIsOpenUpload(true)}
+							>
 								Subir
 							</button>
 						</div>
@@ -52,7 +60,8 @@ export default function Document() {
 					</select>
 				</div>
 			</section>
-            {isOpen && <Createfile onClose={() => setIsOpen(false)} />}
+			{isOpen && <CreateFile onClose={() => setIsOpen(false)} />}
+			{isOpenUpload && <UploadFile onClose={() => setIsOpenUpload(false)} />}
 		</main>
 	);
 }
