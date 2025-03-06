@@ -27,7 +27,7 @@ export default function Documents() {
 	return (
 		<div>
 			<Document />
-			<Table data={documents} />
+			<Table directoryData={documents} />
 		</div>
 	);
 }
