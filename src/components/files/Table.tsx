@@ -6,6 +6,7 @@ import { useDeleteDocument } from "@/hooks/useDeleteDocument";
 import Cookies from "js-cookie";
 import jwt from "jsonwebtoken";
 import { UserResponse } from "@/types/user.interfaces";
+import { toast } from "react-toastify";
 
 interface TableProps {
 	directoryData: IDocument | null;
@@ -87,9 +88,11 @@ export default function Table({ directoryData }: TableProps) {
 											<button
 												onClick={async () => {
 													try {
-														await deleteDocument(userId, doc.id);
+														deleteDocument(userId, doc.id);
+
+														toast.success("Documento eliminado exitosamente");
 													} catch (error) {
-														console.error("Error al borrar documento:", error);
+														toast.error(`Error al borrar documento ${error}`);
 													}
 												}}
 												className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"

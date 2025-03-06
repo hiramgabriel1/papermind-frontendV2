@@ -3,6 +3,7 @@ import { CloseIcon } from "./Icons";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { UploadDocumentProps } from "@/types/Documents.interfaces";
 import { useUploadDocument } from "@/hooks/useUploadDocument";
+import { toast, ToastContainer } from "react-toastify";
 
 interface UploadFileProps {
 	onClose: () => void;
@@ -23,7 +24,7 @@ function UploadFile({ onClose }: UploadFileProps) {
 
 		const fileList = data.document;
 		if (!fileList || fileList.length === 0) {
-			console.error("No se seleccionó ningún archivo");
+			toast.warning("No se seleccionó ningún archivo");
 			return;
 		}
 		const file = fileList[0];
@@ -77,6 +78,7 @@ function UploadFile({ onClose }: UploadFileProps) {
 						<button className="hover:shadow-form w-full rounded-md bg-black py-3 px-8 text-center text-base font-semibold text-white outline-none">
 							Subir archivo
 						</button>
+						<ToastContainer />
 					</div>
 				</form>
 			</div>

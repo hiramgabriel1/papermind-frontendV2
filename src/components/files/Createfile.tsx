@@ -2,6 +2,7 @@ import { useUploadDocument } from "@/hooks/useUploadDocument";
 import { UploadDocumentProps } from "@/types/Documents.interfaces";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { ToastContainer, toast } from "react-toastify";
 
 interface CreateFileProps {
 	onClose: () => void;
@@ -13,20 +14,14 @@ interface CreateFileProps {
  * @returns Componente de creación de carpeta
  */
 export default function CreateFile({ onClose }: CreateFileProps) {
-	const {
-		register,
-		handleSubmit,
-		formState: { errors },
-	} = useForm<UploadDocumentProps>();
+	const { register, handleSubmit } = useForm<UploadDocumentProps>();
 
-	console.log(errors);
-
-	// Llamamos al hook a nivel superior para obtener la función de subida.
 	const uploadDocument = useUploadDocument();
-
 	const onSubmit: SubmitHandler<UploadDocumentProps> = async (formData) => {
 		formData.typeDocument = "directory";
 		await uploadDocument(formData);
+
+		toast.success("Carpeta creada correctamente");
 	};
 
 	return (
@@ -52,6 +47,7 @@ export default function CreateFile({ onClose }: CreateFileProps) {
 					<button className="bg-black text-white p-2 rounded-lg w-full hover:bg-gray-800 transition mt-12">
 						Crear
 					</button>
+					<ToastContainer />
 				</form>
 			</div>
 		</div>

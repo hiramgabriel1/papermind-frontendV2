@@ -6,10 +6,10 @@ const data = [
 		href: "/",
 		label: "Conversaciones",
 	},
-	// {
-	// 	href: "/summarise",
-	// 	label: "Summarise",
-	// },
+	{
+		href: "/chats",
+		label: "Chats",
+	},
 	{
 		href: "/documents",
 		label: "Documentos",

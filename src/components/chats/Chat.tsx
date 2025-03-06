@@ -1,7 +1,10 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import Preview from "./Preview";
 import { useFindFile } from "@/hooks/useFindFile";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useQueryChat } from "@/hooks/useQueryChat";
 
 /**
  * Componente de chat
@@ -12,6 +15,10 @@ interface ChatProps {
 	chatId: number | string;
 }
 
+type InputsChat = {
+	queryMessage: string;
+};
+
 /**
  * Componente de chat
  * @param chatId - ID del chat
@@ -20,6 +27,10 @@ interface ChatProps {
 export default function Chat({ chatId }: ChatProps) {
 	const [documentUrl, setDocumentUrl] = useState<string | null>(null);
 	const findFile = useFindFile(Number(chatId));
+
+	const { register, handleSubmit } = useForm<InputsChat>();
+	const onSubmit: SubmitHandler<InputsChat> = async (data) =>
+		await useQueryChat(data.queryMessage, String(chatId));
 
 	useEffect(() => {
 		findFile.then((res) => {
@@ -38,57 +49,38 @@ export default function Chat({ chatId }: ChatProps) {
 								ayudarte a responder preguntas sobre los documentos que has
 								subido.
 							</p>
-							<p>
-								El contexto del proyecto se centra en el diseño y desarrollo de
-								un sitio web interactivo para Billing and Go, que ofrece una
-								solución en la nube para la automatización de la facturación y
-								la gestión empresarial. El objetivo es crear un sitio web
-								moderno y responsivo donde los usuarios puedan suscribirse a
-								diferentes planes, gestionar facturación, contactos,
-								administración y cobros, así como acceder a funciones avanzadas
-								como la conciliación bancaria y puntos de autoservicio para
-								restaurantes. Los entregables del proyecto incluyen
-								documentación detallada de la estructura del sitio web, una
-								interfaz de usuario atractiva, navegación fácil y acceso a todas
-								las funcionalidades desde dispositivos móviles y de escritorio.
-								Además, se creará un módulo de gestión de usuarios para
-								personalizar perfiles, ver el historial de pagos y facturas, y
-								gestionar saldos de servicio.
-							</p>
-							<p>
-								Aquí hay cinco posibles preguntas que podrías hacer sobre el
-								documento.
-							</p>
+							<p>Puedo ayudarte con:</p>
 							<ul className="list-disc pl-6">
 								<li>
-									<button>Resumir la informacion del documento</button>
+									<span>Resumir la informacion del documento</span>
 								</li>
 								<li>
-									<button>
+									<span>
 										Crear una version diferente en base a tu documento
-									</button>
+									</span>
 								</li>
 								<li>
-									<button>Generar mas ideas para tu documento</button>
+									<span>Generar mas ideas para tu documento</span>
 								</li>
 								<li>
-									<button>Buscar informacion especifica</button>
-								</li>
-								<li>
-									<button>Hola</button>
+									<span>Buscar informacion especifica</span>
 								</li>
 							</ul>
 						</div>
 						<div id="chat-input sticky top-0 bg-white z-10 p-4">
-							<div className="flex space-x-4 bg-white border border-gray-300 rounded-lg p-3">
+							<form
+								onSubmit={handleSubmit(onSubmit)}
+								className="flex space-x-4 bg-white border border-gray-300 rounded-lg p-3"
+							>
 								<button className="text-base text-gray-400">+</button>
 								<textarea
 									className="w-full text-sm p-2 resize-none focus:outline-none"
 									rows={1}
 									placeholder="Escribe algo..."
+									{...register("queryMessage")}
 								/>
 								<button className="px-4 py-2 text-sm">Enviar</button>
-							</div>
+							</form>
 						</div>
 					</div>
 					<div>
