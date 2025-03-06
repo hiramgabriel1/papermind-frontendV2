@@ -1,8 +1,10 @@
 "use client";
 import React from 'react'
 import { useEffect, useState} from 'react';
+import Createfile from './Createfile';
 
 export default function Document() {
+    const [isOpen, setIsOpen] = useState(false);
     const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
@@ -27,7 +29,9 @@ export default function Document() {
                         <button className='px-3 py-2 border border-gray-500 rounded-lg'>Crear carpeta</button>
                     </div>
                     <div>
-                        <button className='px-3 py-2 border border-gray-500 bg-black text-white rounded-lg'>Subir</button>
+                        <button className='px-3 py-2 border border-gray-500 bg-black text-white rounded-lg' onClick={() => setIsOpen(true)}>Subir</button>
+
+                        {isOpen && <Createfile onClose={() => setIsOpen(false)} />}
                     </div>
                 </div>
             </div>
