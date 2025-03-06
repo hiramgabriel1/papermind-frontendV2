@@ -38,7 +38,6 @@ function Register() {
 			router.push("/");
 		} else {
 			// todo: pendiente cambiar por un toast
-			console.log("Error en el registro o no se recibió token");
 		}
 	};
 

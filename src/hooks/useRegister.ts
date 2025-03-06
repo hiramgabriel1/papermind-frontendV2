@@ -19,7 +19,5 @@ export const useRegister = async (data: User) => {
 		}
 
 		return response.data;
-	} catch (error) {
-		console.log(error);
-	}
+	} catch (error) {}
 };

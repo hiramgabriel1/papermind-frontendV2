@@ -1,4 +1,5 @@
 "use client";
+
 import React from 'react'
 import { useEffect, useState} from 'react';
 import Createfile from './Createfile';
@@ -7,11 +8,6 @@ export default function Document() {
     const [isOpen, setIsOpen] = useState(false);
     const [isClient, setIsClient] = useState(false);
 
-    useEffect(() => {
-        setIsClient(true);
-      }, []);
-    
-      if (!isClient) return null;
   return (
     <main>
         <section>
