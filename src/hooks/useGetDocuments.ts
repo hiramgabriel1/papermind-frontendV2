@@ -20,7 +20,7 @@ export const useGetDocuments = () => {
 
 	const getDocuments = useCallback(async () => {
 		const response = await axios.get(
-			`${servers.local_api}/api/v1/users/view-directories/${userId}`,
+			`${servers.local_api}/api/v1/users/view-documents/${userId}`,
 			{
 				headers: {
 					auth: cookieToken,

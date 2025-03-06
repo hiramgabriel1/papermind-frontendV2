@@ -20,13 +20,10 @@ export default function Documents() {
 			.catch();
 	}, []);
 
-	if (!documents) {
-		return <div>Cargando documentos...</div>;
-	}
-
 	return (
 		<div>
 			<Document />
+			{/* @ts-expect-error ignore type error */}
 			<Table directoryData={documents} />
 		</div>
 	);

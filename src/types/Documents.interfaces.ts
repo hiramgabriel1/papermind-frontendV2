@@ -1,6 +1,13 @@
+import moment from "moment";
+
 export interface IDocument {
-	id: number;
-	titleDirectory: string;
-	files: [];
-	userId: number;
+	directories: {
+		id: number;
+		titleDirectory: string;
+		fileUrl: string;
+		typeDocument: string;
+		files: string[];
+		userId: number;
+		createdAt: moment.Moment;
+	}[];
 }
