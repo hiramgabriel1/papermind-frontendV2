@@ -1,17 +1,37 @@
 "use client";
 
-import React from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CreateFile from "./CreateFile";
 import UploadFile from "../UploadFile";
+import Table from "./Table";
+import Pagination from "../Pagination";
+import { useGetDocuments } from "@/hooks/useGetDocuments";
+import { IDocument } from "@/types/Documents.interfaces";
 
 /**
- * Componente que muestra la lista de documentos y permite crear nuevos archivos o directorios
- * @returns
+ * Componente de documentos
+ * @returns Componente de documentos
  */
 export default function Document() {
 	const [isOpen, setIsOpen] = useState(false);
 	const [isOpenUpload, setIsOpenUpload] = useState(false);
+	const [documents, setDocuments] = useState<IDocument | null>(null);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [limit] = useState(10);
+	const [total, setTotal] = useState(0);
+
+	const { getDocuments } = useGetDocuments();
+
+	useEffect(() => {
+		const fetchDocuments = async () => {
+			const data = await getDocuments(currentPage, limit);
+			setDocuments(data);
+			if (data.total) {
+				setTotal(data.total);
+			}
+		};
+		fetchDocuments();
+	}, [getDocuments, currentPage, limit]);
 
 	return (
 		<main>
@@ -19,7 +39,7 @@ export default function Document() {
 				<div className="flex justify-between">
 					<div>
 						<h3 className="font-semibold text-2xl">Documentos</h3>
-						<p className="text-gray-500">Mira todos tus archivos aqui.</p>
+						<p className="text-gray-500">Mira todos tus archivos aquí.</p>
 					</div>
 					<div className="flex space-x-4 justify-center">
 						<div>
@@ -62,6 +82,19 @@ export default function Document() {
 			</section>
 			{isOpen && <CreateFile onClose={() => setIsOpen(false)} />}
 			{isOpenUpload && <UploadFile onClose={() => setIsOpenUpload(false)} />}
+			{documents ? (
+				<>
+					<Table directoryData={documents} />
+					<Pagination
+						currentPage={currentPage}
+						total={total}
+						limit={limit}
+						onPageChange={setCurrentPage}
+					/>
+				</>
+			) : (
+				<p>Cargando documentos...</p>
+			)}
 		</main>
 	);
 }

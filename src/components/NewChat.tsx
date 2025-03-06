@@ -3,11 +3,17 @@
 import { useState } from "react";
 import FileUpload from "./FileUpload";
 import { useCreateChat } from "@/hooks/useCreateChat";
+import { useRouter } from "next/navigation";
 
+/**
+ * Componente de nueva conversación
+ * @returns Componente de nueva conversación
+ */
 export default function NewChat() {
 	const [isOpen, setIsOpen] = useState(false);
 	const [file, setFile] = useState<File | null>(null);
 
+	const router = useRouter();
 	const createChat = useCreateChat();
 
 	const handleCreate = async () => {
@@ -15,13 +21,13 @@ export default function NewChat() {
 
 		try {
 			const formData = new FormData();
-			formData.append("doc", file);
-			formData.append("title", file.name);
+			formData.append("document", file);
 
-			await createChat(formData);
+			const uploaded = await createChat(formData);
 
 			setIsOpen(false);
 			setFile(null);
+			router.push(`/chat/${uploaded.chat.id}`);
 		} catch (error) {
 			console.error("Error al crear el chat:", error);
 		}

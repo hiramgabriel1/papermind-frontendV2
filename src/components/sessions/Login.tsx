@@ -17,11 +17,7 @@ type Inputs = {
  * @returns The login form
  */
 function Login() {
-	const {
-		register,
-		handleSubmit,
-		formState: { errors },
-	} = useForm<Inputs>();
+	const { register, handleSubmit } = useForm<Inputs>();
 	const router = useRouter();
 	const { setToken } = useAuthStore();
 

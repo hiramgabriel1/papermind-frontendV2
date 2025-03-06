@@ -5,6 +5,10 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import jwt from "jsonwebtoken";
 
+/**
+ * Hook para obtener los documentos de un usuario
+ * @returns {Object} - Objeto con la función getDocuments
+ */
 export const useGetDocuments = () => {
 	const cookieToken = Cookies.get("token");
 	if (!cookieToken) {
@@ -18,21 +22,24 @@ export const useGetDocuments = () => {
 
 	const { userId } = decodedToken as UserResponse;
 
-	const getDocuments = useCallback(async () => {
-		const response = await axios.get(
-			`${servers.local_api}/api/v1/users/view-documents/${userId}`,
-			{
-				headers: {
-					auth: cookieToken,
-				},
-			}
-		);
+	const getDocuments = useCallback(
+		async (page: number = 1, limit: number = 5) => {
+			const response = await axios.get(
+				`${servers.local_api}/api/v1/users/view-documents/${userId}?page=${page}&limit=${limit}`,
+				{
+					headers: {
+						auth: cookieToken,
+					},
+				}
+			);
 
-		if (response.status === 200) {
-			return response.data;
-		}
-		return { error: response.data };
-	}, [userId, cookieToken]);
+			if (response.status === 200) {
+				return response.data;
+			}
+			return { error: response.data };
+		},
+		[userId, cookieToken]
+	);
 
 	return { getDocuments };
 };

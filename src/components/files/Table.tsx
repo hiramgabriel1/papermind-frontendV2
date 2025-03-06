@@ -11,11 +11,6 @@ interface TableProps {
 	directoryData: IDocument | null;
 }
 
-/**
- * this component is used to show the table of documents
- * @param directoryData - data of the documents
- * @returns the table of documents
- */
 export default function Table({ directoryData }: TableProps) {
 	const token = Cookies.get("token");
 	const deleteDocument = useDeleteDocument();
@@ -26,7 +21,7 @@ export default function Table({ directoryData }: TableProps) {
 	if (!directoryData?.directories) {
 		return (
 			<div className="flex justify-center items-center h-full">
-				<p className="text-gray-500">No hay archivos</p>
+				<p className="text-gray-500">No hay documentos por mostrar</p>
 			</div>
 		);
 	}
