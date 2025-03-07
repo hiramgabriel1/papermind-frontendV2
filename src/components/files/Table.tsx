@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { IDocument } from "@/types/Documents.interfaces";
 import { DeleIcon, DirectoryIcon, EditIcon, FileIcon } from "../Icons";
 import moment from "moment";
@@ -12,6 +12,11 @@ interface TableProps {
 	directoryData: IDocument | null;
 }
 
+/**
+ * Tabla de documentos
+ * @param directoryData - Datos de los documentos
+ * @returns Tabla de documentos
+ */
 export default function Table({ directoryData }: TableProps) {
 	const token = Cookies.get("token");
 	const deleteDocument = useDeleteDocument();
@@ -19,7 +24,29 @@ export default function Table({ directoryData }: TableProps) {
 	const decodedToken = jwt.decode(String(token));
 	const { userId } = decodedToken as UserResponse;
 
-	if (!directoryData?.directories) {
+	const [localData, setLocalData] = useState<IDocument | null>(directoryData);
+
+	useEffect(() => {
+		setLocalData(directoryData);
+	}, [directoryData]);
+
+	const handleDelete = async (docId: number) => {
+		try {
+			await deleteDocument(userId, docId);
+			toast.success("Documento eliminado exitosamente");
+
+			if (localData) {
+				setLocalData({
+					...localData,
+					directories: localData.directories.filter((doc) => doc.id !== docId),
+				});
+			}
+		} catch (error) {
+			toast.error(`Error al borrar documento: ${error}`);
+		}
+	};
+
+	if (!localData?.directories) {
 		return (
 			<div className="flex justify-center items-center h-full">
 				<p className="text-gray-500">No hay documentos por mostrar</p>
@@ -52,7 +79,7 @@ export default function Table({ directoryData }: TableProps) {
 							</tr>
 						</thead>
 						<tbody>
-							{directoryData.directories.map((doc) => {
+							{localData.directories.map((doc) => {
 								const Icon =
 									doc.typeDocument === "directory" ? DirectoryIcon : FileIcon;
 								return (
@@ -86,15 +113,7 @@ export default function Table({ directoryData }: TableProps) {
 										</td>
 										<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
 											<button
-												onClick={async () => {
-													try {
-														deleteDocument(userId, doc.id);
-
-														toast.success("Documento eliminado exitosamente");
-													} catch (error) {
-														toast.error(`Error al borrar documento ${error}`);
-													}
-												}}
+												onClick={() => handleDelete(doc.id)}
 												className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
 											>
 												<DeleIcon />

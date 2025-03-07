@@ -14,7 +14,7 @@ export default function Preview({ pdfUrl }: PreviewProps) {
 		<div>
 			<iframe
 				src={pdfUrl}
-				style={{ width: "100%", height: "85vh", border: "1px solid #ccc" }}
+				style={{ width: "100%", height: "90vh", border: "1px solid #ccc" }}
 				title="Vista previa del PDF"
 			/>
 		</div>

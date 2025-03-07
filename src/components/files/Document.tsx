@@ -15,6 +15,7 @@ import { IDocument } from "@/types/Documents.interfaces";
 export default function Document() {
 	const [isOpen, setIsOpen] = useState(false);
 	const [isOpenUpload, setIsOpenUpload] = useState(false);
+
 	const [documents, setDocuments] = useState<IDocument | null>(null);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [limit] = useState(10);
@@ -22,16 +23,20 @@ export default function Document() {
 
 	const { getDocuments } = useGetDocuments();
 
+	const fetchDocuments = async () => {
+		const data = await getDocuments(currentPage, limit);
+		setDocuments(data);
+		if (data.total) {
+			setTotal(data.total);
+		}
+	};
+
 	useEffect(() => {
-		const fetchDocuments = async () => {
-			const data = await getDocuments(currentPage, limit);
-			setDocuments(data);
-			if (data.total) {
-				setTotal(data.total);
-			}
-		};
 		fetchDocuments();
-	}, [getDocuments, currentPage, limit]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentPage, limit]);
+
+	const handleRefresh = () => fetchDocuments();
 
 	return (
 		<main>
@@ -80,8 +85,20 @@ export default function Document() {
 					</select>
 				</div>
 			</section>
-			{isOpen && <CreateFile onClose={() => setIsOpen(false)} />}
-			{isOpenUpload && <UploadFile onClose={() => setIsOpenUpload(false)} />}
+
+			{isOpen && (
+				<CreateFile
+					onClose={() => setIsOpen(false)}
+					onCreated={handleRefresh}
+				/>
+			)}
+			{isOpenUpload && (
+				<UploadFile
+					onClose={() => setIsOpenUpload(false)}
+					onUploaded={handleRefresh}
+				/>
+			)}
+
 			{documents ? (
 				<>
 					<Table directoryData={documents} />

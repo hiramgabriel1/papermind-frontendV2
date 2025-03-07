@@ -23,8 +23,9 @@ type Message = {
 };
 
 /**
- * Componente de chat
+ * Chat
  * @param chatId - ID del chat
+ * @returns Chat
  */
 export default function Chat({ chatId }: ChatProps) {
 	const [documentUrl, setDocumentUrl] = useState<string | null>(null);
@@ -32,7 +33,6 @@ export default function Chat({ chatId }: ChatProps) {
 	const [historyChat, setHistoryChat] = useState<Message[]>([]);
 
 	const findFile = useFindFile(Number(chatId));
-
 	const { register, handleSubmit, reset } = useForm<InputsChat>();
 
 	const onSubmit: SubmitHandler<InputsChat> = async (data) => {
@@ -64,9 +64,9 @@ export default function Chat({ chatId }: ChatProps) {
 
 	return (
 		<main className="p-4">
-			<section className="grid grid-cols-1 gap-4 p-4 lg:grid-cols-2 text-start">
-				<div>
-					<div className="mt-4 border p-4 rounded-lg max-h-[400px] overflow-y-auto flex flex-col gap-4">
+			<section className="h-[90vh] grid grid-cols-1 lg:grid-cols-2 gap-4 text-start">
+				<div className="flex flex-col h-full overflow-hidden">
+					<div className="flex-1 border p-4 rounded-lg overflow-y-auto flex flex-col gap-4">
 						{combinedMessages.length > 0 ? (
 							combinedMessages.map((msg, index) => (
 								<div key={index}>
@@ -93,11 +93,10 @@ export default function Chat({ chatId }: ChatProps) {
 							<FirstMessage />
 						)}
 					</div>
-
-					<div id="chat-input" className="sticky top-0 bg-white z-10 p-4">
+					<div className="bg-white p-4 border border-gray-300 rounded-lg mt-4">
 						<form
 							onSubmit={handleSubmit(onSubmit)}
-							className="flex space-x-4 bg-white border border-gray-300 rounded-lg p-3"
+							className="flex space-x-4 items-center"
 						>
 							<button type="button" className="text-base text-gray-400">
 								+
@@ -109,13 +108,15 @@ export default function Chat({ chatId }: ChatProps) {
 								placeholder="Escribe algo..."
 								{...register("queryMessage")}
 							/>
-							<button type="submit" className="px-4 py-2 text-sm">
+							<button type="submit" className="px-4 py-2 text-sm bg-gray-200">
 								Enviar
 							</button>
 						</form>
 					</div>
 				</div>
-				<Preview pdfUrl={String(documentUrl)} />
+				<div className="h-full border rounded-lg overflow-hidden">
+					<Preview pdfUrl={String(documentUrl)} />
+				</div>
 			</section>
 		</main>
 	);

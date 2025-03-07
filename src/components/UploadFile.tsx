@@ -1,89 +1,59 @@
+"use client";
+
 import React from "react";
-import { CloseIcon } from "./Icons";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { UploadDocumentProps } from "@/types/Documents.interfaces";
 import { useUploadDocument } from "@/hooks/useUploadDocument";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 interface UploadFileProps {
 	onClose: () => void;
+	onUploaded: () => void; // Nuevo callback
 }
 
 /**
  * Componente para subir un archivo
- * @param onClose - Función para cerrar el componente
- * @returns Componente de subida de archivo
  */
-function UploadFile({ onClose }: UploadFileProps) {
+export default function UploadFile({ onClose, onUploaded }: UploadFileProps) {
 	const { register, handleSubmit } = useForm<UploadDocumentProps>();
-
 	const uploadDocument = useUploadDocument();
 
-	const onSubmit: SubmitHandler<UploadDocumentProps> = async (data) => {
-		data.typeDocument = "file";
-
-		const fileList = data.document;
-		if (!fileList || fileList.length === 0) {
-			toast.warning("No se seleccionó ningún archivo");
-			return;
-		}
-		const file = fileList[0];
-
-		const formData = new FormData();
-		formData.append("document", file);
-		formData.append("typeDocument", data.typeDocument);
-
+	const onSubmit: SubmitHandler<UploadDocumentProps> = async (formData) => {
+		formData.typeDocument = "file";
 		await uploadDocument(formData);
+
+		toast.success("Archivo subido correctamente");
+		// 1. Llamamos al callback
+		onUploaded();
+		// 2. Cerramos el modal
 		onClose();
 	};
 
 	return (
-		<div className="flex items-center justify-center p-12">
-			<div className="mx-auto w-full max-w-[550px] bg-white">
-				<form onSubmit={handleSubmit(onSubmit)} className="py-6 px-9">
-					<button type="button" onClick={onClose} className="mb-4">
-						<CloseIcon />
+		<div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black/50 backdrop-blur-sm z-50">
+			<div className="bg-white p-6 rounded-lg shadow-lg w-96 animate-fadeIn">
+				<div className="flex justify-between items-center mb-4">
+					<h3 className="text-lg font-semibold">Subir archivo</h3>
+					<button
+						className="text-gray-600 hover:text-gray-800 p-2"
+						onClick={onClose}
+					>
+						✖
 					</button>
-					<div className="mb-6 pt-4">
-						<div className="mb-8">
-							<input
-								type="file"
-								id="file"
-								className="sr-only"
-								accept="application/pdf"
-								{...register("document")}
-							/>
-							<label
-								htmlFor="file"
-								className="relative flex min-h-[200px] items-center justify-center rounded-md border border-dashed border-[#e0e0e0] p-12 text-center"
-							>
-								<div>
-									<span className="mb-2 block text-xl font-semibold text-[#07074D]">
-										Arrastra y suelta
-									</span>
-									<span className="mb-2 block text-base font-medium text-[#6B7280]">
-										O haz click para seleccionar
-									</span>
-									<button
-										type="button"
-										className="inline-flex rounded border border-[#e0e0e0] py-2 px-7 text-base font-medium text-[#07074D]"
-									>
-										Seleccionar archivo
-									</button>
-								</div>
-							</label>
-						</div>
-					</div>
-					<div>
-						<button className="hover:shadow-form w-full rounded-md bg-black py-3 px-8 text-center text-base font-semibold text-white outline-none">
-							Subir archivo
-						</button>
-						<ToastContainer />
-					</div>
+				</div>
+
+				<form onSubmit={handleSubmit(onSubmit)}>
+					{/* Tu input file o campos necesarios */}
+					<input
+						type="file"
+						className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black my-2"
+						{...register("document", { required: true })}
+					/>
+					<button className="bg-black text-white p-2 rounded-lg w-full hover:bg-gray-800 transition mt-12">
+						Subir
+					</button>
 				</form>
 			</div>
 		</div>
 	);
 }
-
-export default UploadFile;
