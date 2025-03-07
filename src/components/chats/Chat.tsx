@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Preview from "./Preview";
 import { useFindFile } from "@/hooks/useFindFile";
@@ -8,6 +8,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useQueryChat } from "@/hooks/useQueryChat";
 import FirstMessage from "./FirstMessage";
 import { getDataChat } from "@/hooks/useGetDataChat";
+import Loading from "./Loading";
 
 interface ChatProps {
 	chatId: number | string;
@@ -31,15 +32,20 @@ export default function Chat({ chatId }: ChatProps) {
 	const [documentUrl, setDocumentUrl] = useState<string | null>(null);
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [historyChat, setHistoryChat] = useState<Message[]>([]);
+	const [loading, setLoading] = useState<boolean>(false);
+
+	const messagesEndRef = useRef<HTMLDivElement>(null);
 
 	const findFile = useFindFile(Number(chatId));
 	const { register, handleSubmit, reset } = useForm<InputsChat>();
 
 	const onSubmit: SubmitHandler<InputsChat> = async (data) => {
+		setLoading(true);
 		const response = await useQueryChat(data.queryMessage, String(chatId));
 		if (response && response.messages) {
 			setMessages(response.messages);
 		}
+		setLoading(false);
 		reset();
 	};
 
@@ -62,6 +68,12 @@ export default function Chat({ chatId }: ChatProps) {
 
 	const combinedMessages = [...historyChat, ...messages];
 
+	useEffect(() => {
+		if (messagesEndRef.current) {
+			messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+		}
+	}, [combinedMessages]);
+
 	return (
 		<main className="p-4">
 			<section className="h-[90vh] grid grid-cols-1 lg:grid-cols-2 gap-4 text-start">
@@ -83,8 +95,8 @@ export default function Chat({ chatId }: ChatProps) {
 										</div>
 									</div>
 									<div className="flex justify-end mb-2">
-										<div className="bg-green-100 p-2 rounded-lg max-w-[80%]">
-											<p className="text-gray-800">{msg.systemAnswer}</p>
+										<div className="bg-white p-2 rounded-lg max-w-[80%]">
+											<p className="text-white-800">{msg.systemAnswer}</p>
 										</div>
 									</div>
 								</div>
@@ -92,6 +104,12 @@ export default function Chat({ chatId }: ChatProps) {
 						) : (
 							<FirstMessage />
 						)}
+						{loading && (
+							<div className="flex justify-center mt-4">
+								<Loading />
+							</div>
+						)}
+						<div ref={messagesEndRef} />
 					</div>
 					<div className="bg-white p-4 border border-gray-300 rounded-lg mt-4">
 						<form
@@ -108,7 +126,13 @@ export default function Chat({ chatId }: ChatProps) {
 								placeholder="Escribe algo..."
 								{...register("queryMessage")}
 							/>
-							<button type="submit" className="px-4 py-2 text-sm bg-gray-200">
+							<button
+								type="submit"
+								disabled={loading}
+								className={`px-4 py-2 text-sm bg-black text-white rounded-md ${
+									loading ? "opacity-50 cursor-not-allowed" : ""
+								}`}
+							>
 								Enviar
 							</button>
 						</form>
