@@ -7,6 +7,7 @@ import Table from "./Table";
 import Pagination from "../Pagination";
 import { useGetDocuments } from "@/hooks/useGetDocuments";
 import { IDocument } from "@/types/Documents.interfaces";
+import { ToastContainer } from "react-toastify";
 
 /**
  * Componente de documentos
@@ -40,6 +41,7 @@ export default function Document() {
 
 	return (
 		<main>
+			<ToastContainer />
 			<section className={`${isOpen ? "blur z-10" : ""}`}>
 				<div className="flex justify-between">
 					<div>
@@ -93,10 +95,12 @@ export default function Document() {
 				/>
 			)}
 			{isOpenUpload && (
-				<UploadFile
-					onClose={() => setIsOpenUpload(false)}
-					onUploaded={handleRefresh}
-				/>
+				<>
+					<UploadFile
+						onClose={() => setIsOpenUpload(false)}
+						onUploaded={handleRefresh}
+					/>
+				</>
 			)}
 
 			{documents ? (

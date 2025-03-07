@@ -88,7 +88,7 @@ function Page() {
 			<div className="overflow-y-auto max-h-[500px] space-y-6 pr-2">
 				{todayChats.length > 0 && (
 					<div>
-						<h2 className="text-lg font-semibold text-gray-800 mb-2">Hoy</h2>
+						<h2 className="text-2xl font-bold mb-2">Hoy</h2>
 						<div className="space-y-2">
 							{todayChats.map((chat: Chat) => (
 								<div
@@ -112,9 +112,7 @@ function Page() {
 
 				{past30DaysChats.length > 0 && (
 					<div>
-						<h2 className="text-lg font-semibold text-gray-800 mb-2">
-							Últimos 30 días
-						</h2>
+						<h2 className="text-2xl font-bold mb-2">Últimos 30 días</h2>
 						<div className="space-y-2">
 							{past30DaysChats.map((chat: Chat) => (
 								<div
