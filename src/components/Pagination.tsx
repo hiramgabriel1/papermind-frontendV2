@@ -42,7 +42,7 @@ export default function Pagination({
 				disabled={currentPage === 1}
 				className="px-3 py-2 border border-gray-500 rounded-lg"
 			>
-				Previous
+				Anterior
 			</button>
 			<p className="text-sm text-gray-700">
 				Mostrando página {currentPage} de {totalPages}
@@ -52,7 +52,7 @@ export default function Pagination({
 				disabled={currentPage === totalPages}
 				className="px-3 py-2 border border-gray-500 rounded-lg bg-black text-white"
 			>
-				Next
+				Siguiente
 			</button>
 		</div>
 	);
