@@ -1,15 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import Preview from "./Preview";
 import { useFindFile } from "@/hooks/useFindFile";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useQueryChat } from "@/hooks/useQueryChat";
-
-/**
- * Componente de chat
- * @returns Componente de chat
- */
+import FirstMessage from "./FirstMessage";
+import { getDataChat } from "@/hooks/useGetDataChat";
 
 interface ChatProps {
 	chatId: number | string;
@@ -19,75 +17,105 @@ type InputsChat = {
 	queryMessage: string;
 };
 
+type Message = {
+	user: string;
+	systemAnswer: string;
+};
+
 /**
  * Componente de chat
  * @param chatId - ID del chat
- * @returns Componente de chat
  */
 export default function Chat({ chatId }: ChatProps) {
 	const [documentUrl, setDocumentUrl] = useState<string | null>(null);
+	const [messages, setMessages] = useState<Message[]>([]);
+	const [historyChat, setHistoryChat] = useState<Message[]>([]);
+
 	const findFile = useFindFile(Number(chatId));
 
-	const { register, handleSubmit } = useForm<InputsChat>();
-	const onSubmit: SubmitHandler<InputsChat> = async (data) =>
-		await useQueryChat(data.queryMessage, String(chatId));
+	const { register, handleSubmit, reset } = useForm<InputsChat>();
+
+	const onSubmit: SubmitHandler<InputsChat> = async (data) => {
+		const response = await useQueryChat(data.queryMessage, String(chatId));
+		if (response && response.messages) {
+			setMessages(response.messages);
+		}
+		reset();
+	};
 
 	useEffect(() => {
 		findFile.then((res) => {
-			setDocumentUrl(res.chat.fileUrl);
+			if (res?.chat?.fileUrl) {
+				setDocumentUrl(res.chat.fileUrl);
+			}
 		});
 	}, [findFile]);
 
+	useEffect(() => {
+		(async () => {
+			const data = await getDataChat(String(chatId));
+			if (data?.chat?.contextChat) {
+				setHistoryChat(data.chat.contextChat);
+			}
+		})();
+	}, [chatId]);
+
+	const combinedMessages = [...historyChat, ...messages];
+
 	return (
-		<main>
-			<section>
-				<div className="grid grid-cols-1 gap-4 p-4 lg:grid-cols-2 text-start">
-					<div>
-						<div className="py-4 space-y-4 flex flex-col">
-							<p>
-								¡Hola! Soy tu asistente de documentos multilingüe, aquí para
-								ayudarte a responder preguntas sobre los documentos que has
-								subido.
-							</p>
-							<p>Puedo ayudarte con:</p>
-							<ul className="list-disc pl-6">
-								<li>
-									<span>Resumir la informacion del documento</span>
-								</li>
-								<li>
-									<span>
-										Crear una version diferente en base a tu documento
-									</span>
-								</li>
-								<li>
-									<span>Generar mas ideas para tu documento</span>
-								</li>
-								<li>
-									<span>Buscar informacion especifica</span>
-								</li>
-							</ul>
-						</div>
-						<div id="chat-input sticky top-0 bg-white z-10 p-4">
-							<form
-								onSubmit={handleSubmit(onSubmit)}
-								className="flex space-x-4 bg-white border border-gray-300 rounded-lg p-3"
-							>
-								<button className="text-base text-gray-400">+</button>
-								<textarea
-									className="w-full text-sm p-2 resize-none focus:outline-none"
-									rows={1}
-									required
-									placeholder="Escribe algo..."
-									{...register("queryMessage")}
-								/>
-								<button className="px-4 py-2 text-sm">Enviar</button>
-							</form>
-						</div>
+		<main className="p-4">
+			<section className="grid grid-cols-1 gap-4 p-4 lg:grid-cols-2 text-start">
+				<div>
+					<div className="mt-4 border p-4 rounded-lg max-h-[400px] overflow-y-auto flex flex-col gap-4">
+						{combinedMessages.length > 0 ? (
+							combinedMessages.map((msg, index) => (
+								<div key={index}>
+									<div className="flex items-start gap-2 mb-2">
+										<Image
+											src="https://i.pinimg.com/564x/9d/6b/9d/9d6b9db2dcb0526a09b89fb35d075c72.jpg"
+											alt="avatar"
+											className="rounded-full"
+											width={40}
+											height={40}
+										/>
+										<div className="bg-blue-100 p-2 rounded-lg">
+											<p className="text-gray-800">{msg.user}</p>
+										</div>
+									</div>
+									<div className="flex justify-end mb-2">
+										<div className="bg-green-100 p-2 rounded-lg max-w-[80%]">
+											<p className="text-gray-800">{msg.systemAnswer}</p>
+										</div>
+									</div>
+								</div>
+							))
+						) : (
+							<FirstMessage />
+						)}
 					</div>
-					<div>
-						<Preview pdfUrl={String(documentUrl)} />
+
+					<div id="chat-input" className="sticky top-0 bg-white z-10 p-4">
+						<form
+							onSubmit={handleSubmit(onSubmit)}
+							className="flex space-x-4 bg-white border border-gray-300 rounded-lg p-3"
+						>
+							<button type="button" className="text-base text-gray-400">
+								+
+							</button>
+							<textarea
+								className="w-full text-sm p-2 resize-none focus:outline-none"
+								rows={1}
+								required
+								placeholder="Escribe algo..."
+								{...register("queryMessage")}
+							/>
+							<button type="submit" className="px-4 py-2 text-sm">
+								Enviar
+							</button>
+						</form>
 					</div>
 				</div>
+				<Preview pdfUrl={String(documentUrl)} />
 			</section>
 		</main>
 	);
