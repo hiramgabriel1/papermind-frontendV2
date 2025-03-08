@@ -1,16 +1,27 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import moment from "moment";
+import "moment/locale/es";
 import { useFindChats } from "@/hooks/useFindChats";
 import { useRouter } from "next/navigation";
 import { Chat } from "@/types/user.interfaces";
+import { toast, ToastContainer } from "react-toastify";
+import { OptionsIcon } from "@/components/Icons";
+import Dropdown from "@/components/Dropdown";
+import UpdateChatname from "./UpdateChatname";
 
-function Page() {
-	const [_chats, setChats] = useState<[]>([]);
-	const [todayChats, setTodayChats] = useState<[]>([]);
-	const [past30DaysChats, setPast30DaysChats] = useState<[]>([]);
-	const [loading, setLoading] = useState<boolean>(true);
-	const [error, setError] = useState<string | null>(null);
+moment.locale("es");
+
+export default function Page() {
+	const [chats, setChats] = useState<Chat[]>([]);
+	const [todayChats, setTodayChats] = useState<Chat[]>([]);
+	const [past30DaysChats, setPast30DaysChats] = useState<Chat[]>([]);
+	const [loading, setLoading] = useState(true);
+	const [activeChatId, setActiveChatId] = useState<number | null>(null);
+
+	const [editChatId, setEditChatId] = useState<number | null>(null);
+	const [showEditModal, setShowEditModal] = useState(false);
 
 	const router = useRouter();
 
@@ -26,50 +37,75 @@ function Page() {
 	const isWithin30Days = (date: Date) => {
 		const now = new Date().getTime();
 		const difference = now - date.getTime();
-		const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
-		return difference <= thirtyDaysInMs;
+		return difference <= 30 * 24 * 60 * 60 * 1000;
 	};
 
 	useEffect(() => {
 		(async () => {
 			try {
 				const data = await useFindChats();
-				if (data && data.chats) {
-					const sortedChats = data.chats.sort((a: Chat, b: Chat) => {
-						return (
+				if (data?.chats) {
+					const sorted = data.chats.sort(
+						(a: Chat, b: Chat) =>
 							new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-						);
-					});
-
-					const today = sortedChats.filter((chat: Chat) =>
-						isToday(new Date(chat.createdAt))
 					);
-					const past30Days = sortedChats.filter((chat: Chat) => {
-						const chatDate = new Date(chat.createdAt);
-						return !isToday(chatDate) && isWithin30Days(chatDate);
+					const today = sorted.filter((c: Chat) =>
+						isToday(new Date(c.createdAt))
+					);
+					const past30 = sorted.filter((c: Chat) => {
+						const d = new Date(c.createdAt);
+						return !isToday(d) && isWithin30Days(d);
 					});
-
-					setChats(sortedChats);
+					setChats(sorted);
 					setTodayChats(today);
-					setPast30DaysChats(past30Days);
+					setPast30DaysChats(past30);
 				}
 			} catch (err) {
-				console.error(err);
-				setError("Hubo un error al obtener los chats.");
+				toast.error(`Hubo un error al obtener los chats: ${err}`);
 			} finally {
 				setLoading(false);
 			}
 		})();
 	}, []);
 
+	function toggleDropdown(e: React.MouseEvent, chatId: number) {
+		e.stopPropagation();
+		setActiveChatId((prev) => (prev === chatId ? null : chatId));
+	}
+
+	function handleChatDeleted(id: number) {
+		toast.success("Chat eliminado correctamente");
+		setChats((prev) => prev.filter((x) => x.id !== id));
+		setTodayChats((prev) => prev.filter((x) => x.id !== id));
+		setPast30DaysChats((prev) => prev.filter((x) => x.id !== id));
+	}
+
+	function openEditModal(id: number) {
+		setActiveChatId(null);
+		setEditChatId(id);
+		setShowEditModal(true);
+	}
+
+	function handleChatUpdated(id: number, newName: string) {
+		setChats((prev) =>
+			prev.map((c) => (c.id === id ? { ...c, title: newName } : c))
+		);
+		setTodayChats((prev) =>
+			prev.map((c) => (c.id === id ? { ...c, title: newName } : c))
+		);
+		setPast30DaysChats((prev) =>
+			prev.map((c) => (c.id === id ? { ...c, title: newName } : c))
+		);
+	}
+
 	if (loading) return <div>Cargando...</div>;
-	if (error) return <div>{error}</div>;
 
 	return (
-		<div className="p-4 max-w-4xl">
+		<div className="p-4 w-full">
+			<ToastContainer />
 			<h1 className="text-2xl font-bold mb-2">Conversaciones</h1>
 			<p className="text-gray-600 mb-6">
-				Chattea con documentos como pdf, docx y docs
+				Chatea con documentos como pdf, docx y docs
 			</p>
 
 			<div className="flex items-center justify-between mb-4">
@@ -90,10 +126,10 @@ function Page() {
 					<div>
 						<h2 className="text-2xl font-bold mb-2">Hoy</h2>
 						<div className="space-y-2">
-							{todayChats.map((chat: Chat) => (
+							{todayChats.map((chat) => (
 								<div
 									key={chat.id}
-									className="flex items-center justify-between p-3 border rounded-md hover:bg-gray-50 transition cursor-pointer"
+									className="relative flex items-center justify-between p-3 border rounded-md hover:bg-gray-50 transition cursor-pointer"
 									onClick={() => router.push(`/chat/${chat.id}`)}
 								>
 									<div className="flex flex-col">
@@ -101,9 +137,27 @@ function Page() {
 											{chat.title}
 										</span>
 										<span className="text-sm text-gray-500">
-											{new Date(chat.createdAt).toLocaleString()}
+											{moment(chat.createdAt).format("M/D/YYYY, h:mm A")}
 										</span>
 									</div>
+									<button
+										onClick={(e) => toggleDropdown(e, chat.id)}
+										className="text-gray-500 hover:text-gray-700 ml-2"
+									>
+										<OptionsIcon />
+									</button>
+									{activeChatId === chat.id && (
+										<div
+											className="absolute right-0 top-12 w-48 bg-white border border-gray-200 shadow-md rounded-md z-10"
+											onClick={(e) => e.stopPropagation()}
+										>
+											<Dropdown
+												chatId={String(chat.id)}
+												onChatDeleted={() => handleChatDeleted(chat.id)}
+												onEditName={() => openEditModal(chat.id)}
+											/>
+										</div>
+									)}
 								</div>
 							))}
 						</div>
@@ -114,10 +168,10 @@ function Page() {
 					<div>
 						<h2 className="text-2xl font-bold mb-2">Últimos 30 días</h2>
 						<div className="space-y-2">
-							{past30DaysChats.map((chat: Chat) => (
+							{past30DaysChats.map((chat) => (
 								<div
 									key={chat.id}
-									className="flex items-center justify-between p-3 border rounded-md hover:bg-gray-50 transition cursor-pointer"
+									className="relative flex items-center justify-between p-3 border rounded-md hover:bg-gray-50 transition cursor-pointer"
 									onClick={() => router.push(`/chat/${chat.id}`)}
 								>
 									<div className="flex flex-col">
@@ -125,17 +179,44 @@ function Page() {
 											{chat.title}
 										</span>
 										<span className="text-sm text-gray-500">
-											{new Date(chat.createdAt).toLocaleString()}
+											{moment(chat.createdAt).format("M/D/YYYY, h:mm A")}
 										</span>
 									</div>
+									<button
+										onClick={(e) => toggleDropdown(e, chat.id)}
+										className="text-gray-500 hover:text-gray-700 ml-2"
+									>
+										<OptionsIcon />
+									</button>
+									{activeChatId === chat.id && (
+										<div
+											className="absolute right-0 top-12 w-48 bg-white border border-gray-200 shadow-md rounded-md z-10"
+											onClick={(e) => e.stopPropagation()}
+										>
+											<Dropdown
+												chatId={String(chat.id)}
+												onChatDeleted={() => handleChatDeleted(chat.id)}
+												onEditName={() => openEditModal(chat.id)}
+											/>
+										</div>
+									)}
 								</div>
 							))}
 						</div>
 					</div>
 				)}
 			</div>
+
+			{showEditModal && editChatId && (
+				<UpdateChatname
+					chatId={editChatId}
+					onClose={() => setShowEditModal(false)}
+					onUpdated={(newName) => {
+						handleChatUpdated(editChatId, newName);
+						setShowEditModal(false);
+					}}
+				/>
+			)}
 		</div>
 	);
 }
-
-export default Page;

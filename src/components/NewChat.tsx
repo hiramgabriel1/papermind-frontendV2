@@ -5,21 +5,19 @@ import FileUpload from "./FileUpload";
 import { useCreateChat } from "@/hooks/useCreateChat";
 import { useRouter } from "next/navigation";
 
-/**
- * Componente de nueva conversación
- * @returns Componente de nueva conversación
- */
 export default function NewChat() {
 	const [isOpen, setIsOpen] = useState(false);
 	const [file, setFile] = useState<File | null>(null);
+	const [isCreating, setIsCreating] = useState(false);
 
 	const router = useRouter();
 	const createChat = useCreateChat();
 
 	const handleCreate = async () => {
 		if (!file) return;
-
 		try {
+			setIsCreating(true);
+
 			const formData = new FormData();
 			formData.append("document", file);
 
@@ -30,6 +28,8 @@ export default function NewChat() {
 			router.push(`/chat/${uploaded.chat.id}`);
 		} catch (error) {
 			console.error("Error al crear el chat:", error);
+		} finally {
+			setIsCreating(false);
 		}
 	};
 
@@ -66,11 +66,11 @@ export default function NewChat() {
 								Cancelar
 							</button>
 							<button
-								disabled={!file}
+								disabled={!file || isCreating}
 								onClick={handleCreate}
 								className="bg-neutral-950 text-white font-semibold rounded-2xl px-4 py-2 ml-4 cursor-pointer disabled:opacity-20"
 							>
-								Crear
+								{isCreating ? "Creando..." : "Crear"}
 							</button>
 						</div>
 					</section>

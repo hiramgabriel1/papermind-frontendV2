@@ -9,8 +9,8 @@ export default function FirstMessage() {
 		<div className="py-4 space-y-4 flex flex-col">
 			<p>
 				¡Hola! Soy tu asistente de documentos{" "}
-				<span className="font-bold">PaperMind</span>, estoy aquí para ayudarte a
-				responder preguntas sobre los documentos que has subido.
+				<span className="font-bold">@papermind.app</span>, estoy aquí para
+				ayudarte a responder preguntas sobre los documentos que has subido.
 			</p>
 			<p>Puedo ayudarte con:</p>
 			<ul className="list-disc pl-6">

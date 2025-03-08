@@ -45,16 +45,6 @@ export default function Aside() {
 				))}
 			</nav>
 			<footer className="flex flex-col gap-16 mt-auto">
-				{/* <section className="bg-[#e3e9ff] p-4 rounded-lg">
-					<h3 className="text-lg font-semibold">Try Pro</h3>
-					<p className="text-gray-500">
-						Upgrade for more powerful models, unlimited document uploads and
-						access to summarisation.
-					</p>
-					<button className="bg-neutral-950 text-white rounded-2xl px-5 py-2 mt-4">
-						Start Free Trial
-					</button>
-				</section> */}
 				<NavUser />
 			</footer>
 		</aside>

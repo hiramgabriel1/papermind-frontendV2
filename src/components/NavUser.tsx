@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import jwt from "jsonwebtoken";
 import Image from "next/image";
 import { UserResponse } from "@/types/user.interfaces";
+import { OptionsIcon } from "./Icons";
 
 /**
  * this component is used to display the user's information in the navigation bar
@@ -47,7 +48,14 @@ export default function NavUser() {
 			<h3 className="text-xl font-semibold">
 				{username ? username : "Usuario sin nombre"}
 			</h3>
-			<span className="ml-auto">···</span>
+			<span
+				className="ml-auto cursor-pointer"
+				onClick={() => {
+					console.log("Options");
+				}}
+			>
+				<OptionsIcon />
+			</span>
 		</div>
 	);
 }

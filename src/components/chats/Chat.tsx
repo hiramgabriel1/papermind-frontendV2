@@ -9,6 +9,7 @@ import { useQueryChat } from "@/hooks/useQueryChat";
 import FirstMessage from "./FirstMessage";
 import { getDataChat } from "@/hooks/useGetDataChat";
 import Loading from "./Loading";
+import { PlusIcon } from "../Icons";
 
 interface ChatProps {
 	chatId: number | string;
@@ -33,6 +34,7 @@ export default function Chat({ chatId }: ChatProps) {
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [historyChat, setHistoryChat] = useState<Message[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
+	const [showDropdown, setShowDropdown] = useState<boolean>(false);
 
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -116,9 +118,37 @@ export default function Chat({ chatId }: ChatProps) {
 							onSubmit={handleSubmit(onSubmit)}
 							className="flex space-x-4 items-center"
 						>
-							<button type="button" className="text-base text-gray-400">
-								+
-							</button>
+							<div className="relative">
+								<button
+									type="button"
+									className="text-base text-gray-400"
+									onClick={() => setShowDropdown((prev) => !prev)}
+								>
+									<PlusIcon />
+								</button>
+								{showDropdown && (
+									<div className="absolute left-0 bottom-full mb-2 w-48 bg-white border border-gray-200 rounded-md shadow-md z-10 p-2">
+										<ul className="space-y-2">
+											<li>
+												<button
+													className="w-full text-left text-sm px-2 py-1 hover:bg-gray-100 rounded"
+													onClick={() => console.log("Opción 1")}
+												>
+													Crear un nuevo archivo
+												</button>
+											</li>
+											<li>
+												<button
+													className="w-full text-left text-sm px-2 py-1 hover:bg-gray-100 rounded"
+													onClick={() => console.log("Opción 2")}
+												>
+													Compartir chat
+												</button>
+											</li>
+										</ul>
+									</div>
+								)}
+							</div>
 							<textarea
 								className="w-full text-sm p-2 resize-none focus:outline-none"
 								rows={1}
@@ -133,7 +163,7 @@ export default function Chat({ chatId }: ChatProps) {
 									loading ? "opacity-50 cursor-not-allowed" : ""
 								}`}
 							>
-								Enviar
+								{loading ? "Pensando..." : "Preguntar"}
 							</button>
 						</form>
 					</div>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Image from "next/image";
+import { FileIcon } from "./Icons";
 
 interface FileUploadProps {
 	file: File | null;
@@ -23,8 +23,6 @@ export default function FileUpload({ file, setFile }: FileUploadProps) {
 		}
 	};
 
-	const imagePreview = file ? URL.createObjectURL(file) : "";
-
 	return (
 		<section className="p-4">
 			{!file ? (
@@ -45,13 +43,7 @@ export default function FileUpload({ file, setFile }: FileUploadProps) {
 				<div className="bg-white rounded-lg shadow p-4">
 					<div className="flex items-start gap-3">
 						<div className="bg-gray-100 p-2 flex items-center rounded-lg size-12">
-							<Image
-								src={imagePreview}
-								alt=""
-								className="w-full object-cover"
-								width={100}
-								height={100}
-							/>
+							<FileIcon />
 						</div>
 						<div>
 							<h3 className="font-medium text-gray-900">{file.name}</h3>
