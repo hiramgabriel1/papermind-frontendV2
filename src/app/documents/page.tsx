@@ -5,9 +5,5 @@ import Document from "../../components/files/Document";
  * @returns
  */
 export default function Documents() {
-	return (
-		<div>
-			<Document />
-		</div>
-	);
+	return <Document />;
 }
