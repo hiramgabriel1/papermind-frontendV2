@@ -13,6 +13,10 @@ import UpdateChatname from "./UpdateChatname";
 
 moment.locale("es");
 
+/**
+ * Page for the chats
+ * @returns Page for the chats
+ */
 export default function Page() {
 	const [chats, setChats] = useState<Chat[]>([]);
 	const [todayChats, setTodayChats] = useState<Chat[]>([]);
@@ -99,6 +103,8 @@ export default function Page() {
 
 	if (loading) return <div>Cargando...</div>;
 
+	const totalChats = todayChats.length + past30DaysChats.length;
+	const scrollClasses = totalChats >= 6 ? "overflow-y-auto max-h-[500px]" : "";
 	return (
 		<div className="p-4 w-full">
 			<ToastContainer />
@@ -117,7 +123,7 @@ export default function Page() {
 				</div>
 			</div>
 			<br />
-			<div className="overflow-y-auto max-h-[500px] space-y-6 pr-2">
+			<div className={`space-y-6 pr-2 ${scrollClasses}`}>
 				{todayChats.length > 0 && (
 					<div>
 						<h2 className="text-2xl font-bold mb-2">Hoy</h2>
