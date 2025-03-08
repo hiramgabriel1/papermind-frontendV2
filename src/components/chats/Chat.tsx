@@ -155,6 +155,12 @@ export default function Chat({ chatId }: ChatProps) {
 								required
 								placeholder="Escribe algo..."
 								{...register("queryMessage")}
+								onKeyDown={(e) => {
+									if (e.key === "Enter" && !e.shiftKey) {
+										e.preventDefault();
+										handleSubmit(onSubmit)();
+									}
+								}}
 							/>
 							<button
 								type="submit"
