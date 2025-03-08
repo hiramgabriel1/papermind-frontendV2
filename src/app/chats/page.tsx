@@ -19,7 +19,6 @@ export default function Page() {
 	const [past30DaysChats, setPast30DaysChats] = useState<Chat[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [activeChatId, setActiveChatId] = useState<number | null>(null);
-
 	const [editChatId, setEditChatId] = useState<number | null>(null);
 	const [showEditModal, setShowEditModal] = useState(false);
 
@@ -116,11 +115,8 @@ export default function Page() {
 						className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-gray-300"
 					/>
 				</div>
-				<button className="px-4 py-2 bg-black text-white rounded-md">
-					Nuevo chat
-				</button>
 			</div>
-
+			<br />
 			<div className="overflow-y-auto max-h-[500px] space-y-6 pr-2">
 				{todayChats.length > 0 && (
 					<div>
